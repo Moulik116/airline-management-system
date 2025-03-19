@@ -17,3 +17,6 @@ This is a Spring Boot application designed to manage airline flight data. It pro
 ![alt text](image-2.png)
 ![alt text](image-4.png)
 
+# Author
+Moulik Anand Paliwal
+
