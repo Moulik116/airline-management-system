@@ -9,13 +9,13 @@ pipeline {
         PROJECT_DIR = "airline-management-system" // inner directory with pom.xml and Dockerfile
     }
     tools {
-        git 'Default' 
+        git 'Default'
       }
     stages {
         stage('Clean Workspace') {
             steps {
                 // Delete all files in the workspace to avoid stale files/errors
-                deleteDir()
+                cleanWs()
             }
         }
 
