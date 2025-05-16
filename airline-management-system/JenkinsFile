@@ -6,7 +6,7 @@ pipeline {
         CONTAINER_NAME = "airline-management-container"
         AWS_EC2_IP = "54.210.167.7"
         SSH_CREDENTIALS_ID = "ec2-ssh-key"
-        PROJECT_DIR = "airline-management-system" // inner directory that has pom.xml and Dockerfile
+        PROJECT_DIR = "airline-management-system" // inner directory with pom.xml and Dockerfile
     }
 
     stages {
@@ -17,6 +17,12 @@ pipeline {
         }
 
         stage('Build Maven Project') {
+            agent {
+                docker {
+                    image 'maven:3.9.1-openjdk-21'
+                    args '-v $HOME/.m2:/root/.m2' // cache Maven dependencies
+                }
+            }
             steps {
                 dir("${PROJECT_DIR}") {
                     sh 'mvn clean install'
@@ -34,7 +40,7 @@ pipeline {
 
         stage('Push Docker Image (optional)') {
             when {
-                expression { return false } // Set to true if pushing to DockerHub or ECR
+                expression { return false } // change to true to push image
             }
             steps {
                 echo 'Skipping image push (not enabled)'
@@ -62,10 +68,10 @@ pipeline {
 
     post {
         success {
-            echo " Deployed successfully"
+            echo "Deployed successfully"
         }
         failure {
-            echo " Build/Deploy failed"
+            echo "Build/Deploy failed"
         }
     }
 }
