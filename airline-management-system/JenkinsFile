@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "airline-management-system"
         CONTAINER_NAME = "airline-management-container"
-        AWS_EC2_IP = "54.210.167.7"
+        AWS_EC2_IP = "13.220.161.100"
         SSH_CREDENTIALS_ID = "ec2-ssh-key"
         PROJECT_DIR = "airline-management-system" // inner directory with pom.xml and Dockerfile
     }
