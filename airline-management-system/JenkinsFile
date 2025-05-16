@@ -8,7 +8,9 @@ pipeline {
         SSH_CREDENTIALS_ID = "ec2-ssh-key"
         PROJECT_DIR = "airline-management-system" // inner directory with pom.xml and Dockerfile
     }
-
+    tools {
+        git 'Default' 
+      }
     stages {
         stage('Clean Workspace') {
             steps {
