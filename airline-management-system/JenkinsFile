@@ -5,7 +5,8 @@ pipeline {
         IMAGE_NAME = "airline-management-system"
         CONTAINER_NAME = "airline-management-container"
         AWS_EC2_IP = "54.210.167.7"
-        SSH_CREDENTIALS_ID = "ec2-ssh-key" // make sure this Jenkins credential exists
+        SSH_CREDENTIALS_ID = "ec2-ssh-key"
+        PROJECT_DIR = "airline-management-system" // inner directory that has pom.xml and Dockerfile
     }
 
     stages {
@@ -17,23 +18,26 @@ pipeline {
 
         stage('Build Maven Project') {
             steps {
-                // Run tests during build
-                sh 'mvn clean install'
+                dir("${PROJECT_DIR}") {
+                    sh 'mvn clean install'
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                dir("${PROJECT_DIR}") {
+                    sh "docker build -t $IMAGE_NAME ."
+                }
             }
         }
 
         stage('Push Docker Image (optional)') {
             when {
-                expression { return false } // Enable if using DockerHub or ECR
+                expression { return false } // Set to true if pushing to DockerHub or ECR
             }
             steps {
-                echo 'Skipping push for now'
+                echo 'Skipping image push (not enabled)'
             }
         }
 
@@ -45,7 +49,7 @@ pipeline {
                         docker stop $CONTAINER_NAME || true && \
                         docker rm $CONTAINER_NAME || true && \
                         docker rmi $IMAGE_NAME || true && \
-                        cd ~/app && \
+                        cd ~/app/$PROJECT_DIR && \
                         git pull && \
                         docker build -t $IMAGE_NAME . && \
                         docker run -d -p 8082:8082 --name $CONTAINER_NAME $IMAGE_NAME
@@ -58,10 +62,10 @@ pipeline {
 
     post {
         success {
-            echo "Deployed successfully"
+            echo " Deployed successfully"
         }
         failure {
-            echo "Build/Deploy failed"
+            echo " Build/Deploy failed"
         }
     }
 }
